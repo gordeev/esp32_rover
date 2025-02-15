@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RC Car Control</title>
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            color: #ffffff;
+            font-family: 'Roboto', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            text-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            color: #ff4b2b;
+        }
+
+        .video-stream {
+            border: 2px solid #ffffff;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            width: 80%;
+            max-width: 600px;
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            max-width: 300px;
+            width: 100%;
+        }
+
+        .controls button {
+            background: #ff4b2b;
+            color: #ffffff;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.2s;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .controls button:active {
+            background: #ff6a3a;
+            transform: scale(0.95);
+        }
+
+        .controls button:focus {
+            outline: none;
+        }
+
+        .controls .forward {
+            grid-column: 2;
+        }
+
+        .controls .left {
+            grid-column: 1;
+        }
+
+        .controls .stop {
+            grid-column: 2;
+        }
+
+        .controls .right {
+            grid-column: 3;
+        }
+
+        .controls .backward {
+            grid-column: 2;
+        }
+
+        @media (max-width: 500px) {
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .controls {
+                gap: 10px;
+            }
+
+            .controls button {
+                padding: 10px;
+                font-size: 1em;
+            }
+        }
+    </style>
+    <script>
+        function sendCommand(action) {
+            fetch('/control', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'action=' + action
+            });
+        }
+
+        function startMove(action) {
+            sendCommand(action);  // Send the action directly
+        }
+
+        function stopMove() {
+            sendCommand('stop');  // Send a stop command when the button is released
+        }
+    </script>
+</head>
+<body>
+    <h1>RC Car Control</h1>
+    <img src="{{ video_stream_url }}" alt="Video Stream" class="video-stream">
+    
+    <div class="controls">
+        <button class="forward" onmousedown="startMove('go')" onmouseup="stopMove()">Forward</button>
+        <button class="left" onmousedown="startMove('left')" onmouseup="stopMove()">Left</button>
+        <button class="stop" onclick="sendCommand('stop')">Stop</button>
+        <button class="right" onmousedown="startMove('right')" onmouseup="stopMove()">Right</button>
+        <button class="backward" onmousedown="startMove('back')" onmouseup="stopMove()">Backward</button>
+    </div>
+</body>
+</html>
